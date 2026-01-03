@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <model version="NetLogo 7.0.3" snapToGrid="true">
   <code><![CDATA[globals [ 
-  MIN_WAITING_TIME
-  MIN_REORDER_TIMEOUT
-  COMPLETED_REORDER_TIMEOUT
-  IGNORED_REORDER_TIMEOUT
-  HEADING_UPDATE_PROBABILITY
-  completed-order
-  cancelled-order
+  MIN_WAITING_TIME                 ; Waktu tunggu minimal seorang pelanggan
+  MIN_REORDER_TIMEOUT              ; Waktu timeout minimal sebelum pelanggan dapat memesan ulang
+  COMPLETED_REORDER_TIMEOUT        ; Waktu timeout maksimal sebelum pelanggan dapat memesan ulang jika pesanannya diantar
+  IGNORED_REORDER_TIMEOUT          ; Waktu timeout maksimal sebelum pelanggan dapat memesan ulang jika pesanannya dibatalkan
+  HEADING_UPDATE_PROBABILITY       ; Probabilitas kurir merubah headingnya saat roaming
+  completed-order                  ; Jumlah order yang selesai
+  cancelled-order                  ; Jumlah order dibatalkan
 ]
 
 breed [customers customer]
@@ -132,7 +132,7 @@ to make-customer-order
   if random-float 1 < order-arrival-rate [
     let free-customers customers with [status = "r"]
     if any? free-customers [
-      ask n-of min (list (count free-customers) simultanious-order-num) free-customers [
+      ask n-of min (list (count free-customers) simultaneous-order-num) free-customers [
         ; Mulai waktu pemesanan pelanggan
         if waiting-time = 0 [
           set waiting-time 1
@@ -174,12 +174,12 @@ end]]></code>
     <view x="260" wrappingAllowedX="false" y="50" frameRate="30.0" minPycor="-16" height="569" showTickCounter="true" patchSize="17.12121212121212" fontSize="10" wrappingAllowedY="false" width="569" tickCounterLabel="ticks" maxPycor="16" updateMode="1" maxPxcor="16" minPxcor="-16"></view>
     <button x="5" y="5" height="40" disableUntilTicks="false" forever="true" kind="Observer" width="55">go</button>
     <button x="65" y="5" height="40" disableUntilTicks="false" forever="false" kind="Observer" width="66">setup</button>
-    <slider x="5" step="1" y="50" max="100" width="250" display="num-couriers" height="50" min="0" direction="Horizontal" default="10.0" variable="num-couriers" units="Couriers"></slider>
-    <slider x="5" step="0.01" y="105" max="1" width="250" display="order-arrival-rate" height="50" min="0" direction="Horizontal" default="0.25" variable="order-arrival-rate" units="Orders"></slider>
-    <slider x="5" step="0.1" y="160" max="2" width="250" display="courier-speed" height="50" min="1" direction="Horizontal" default="1.0" variable="courier-speed"></slider>
-    <slider x="5" step="1" y="215" max="150" width="250" display="patience-limit" height="50" min="25" direction="Horizontal" default="50.0" variable="patience-limit" units="Ticks"></slider>
-    <slider x="5" step="1" y="270" max="200" width="250" display="num-customers" height="50" min="1" direction="Horizontal" default="50.0" variable="num-customers" units="Person"></slider>
-    <slider x="5" step="1" y="325" max="100" width="250" display="simultanious-order-num" height="50" min="1" direction="Horizontal" default="2.0" variable="simultanious-order-num" units="Orders"></slider>
+    <slider x="5" step="1" y="50" max="100" width="250" display="num-couriers" height="50" min="0" direction="Horizontal" default="20.0" variable="num-couriers" units="Couriers"></slider>
+    <slider x="5" step="0.01" y="105" max="1" width="250" display="order-arrival-rate" height="50" min="0" direction="Horizontal" default="0.75" variable="order-arrival-rate" units="Orders"></slider>
+    <slider x="5" step="0.05" y="160" max="2" width="250" display="courier-speed" height="50" min="1" direction="Horizontal" default="1.0" variable="courier-speed"></slider>
+    <slider x="5" step="1" y="215" max="150" width="250" display="patience-limit" height="50" min="25" direction="Horizontal" default="30.0" variable="patience-limit" units="Ticks"></slider>
+    <slider x="5" step="1" y="270" max="200" width="250" display="num-customers" height="50" min="1" direction="Horizontal" default="70.0" variable="num-customers" units="Person"></slider>
+    <slider x="5" step="1" y="325" max="100" width="250" display="simultaneous-order-num" height="50" min="1" direction="Horizontal" default="4.0" variable="simultaneous-order-num" units="Orders"></slider>
     <monitor x="135" precision="17" y="560" height="60" fontSize="11" width="120" display="Order cancel">cancelled-order</monitor>
     <monitor x="5" precision="17" y="560" height="60" fontSize="11" width="120" display="Pesanan selesai">completed-order</monitor>
     <plot x="5" autoPlotX="true" yMax="10.0" autoPlotY="true" yAxis="Waktu tunggu" y="380" xMin="0.0" height="175" legend="false" xMax="100.0" yMin="0.0" width="250" xAxis="Tick" display="Rata-rata waktu tunggu">
@@ -187,13 +187,12 @@ end]]></code>
       <update></update>
       <pen interval="5.0" mode="0" display="default" color="-2674135" legend="true">
         <setup></setup>
-        <update>plot  mean [waiting-time] of customers with [status = "o" or status = "w"]
-
-</update>
+        <update><![CDATA[plot  mean [waiting-time] of customers with [(status = "o" or status = "w") and waiting-time > 0]
+]]></update>
       </pen>
     </plot>
     <monitor x="5" precision="17" y="625" height="60" fontSize="11" width="120" display="Kurir senggang">count couriers with [status = "f"]</monitor>
-    <monitor x="135" precision="17" y="625" height="60" fontSize="11" width="120" display="Menunggu kurir">count customers with [status = "o"]</monitor>
+    <monitor x="135" precision="17" y="625" height="60" fontSize="11" width="120" display="Menunggu kurir">n-waiting-customer</monitor>
   </widgets>
   <info>## WHAT IS IT?
 
