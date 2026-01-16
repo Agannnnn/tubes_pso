@@ -171,7 +171,7 @@ to complete-order [ordering-customer]
   set completed-order (completed-order + 1)
 end]]></code>
   <widgets>
-    <view x="260" wrappingAllowedX="false" y="50" frameRate="30.0" minPycor="-16" height="569" showTickCounter="true" patchSize="17.12121212121212" fontSize="10" wrappingAllowedY="false" width="569" tickCounterLabel="ticks" maxPycor="16" updateMode="1" maxPxcor="16" minPxcor="-16"></view>
+    <view x="260" wrappingAllowedX="false" y="50" frameRate="30.0" minPycor="-20" height="705" showTickCounter="true" patchSize="17.12121212121212" fontSize="10" wrappingAllowedY="false" width="705" tickCounterLabel="ticks" maxPycor="20" updateMode="1" maxPxcor="20" minPxcor="-20"></view>
     <button x="5" y="5" height="40" disableUntilTicks="false" forever="true" kind="Observer" width="55">go</button>
     <button x="65" y="5" height="40" disableUntilTicks="false" forever="false" kind="Observer" width="66">setup</button>
     <slider x="5" step="1" y="50" max="100" width="250" display="num-couriers" height="50" min="0" direction="Horizontal" default="20.0" variable="num-couriers" units="Couriers"></slider>
@@ -180,7 +180,7 @@ end]]></code>
     <slider x="5" step="1" y="215" max="150" width="250" display="patience-limit" height="50" min="25" direction="Horizontal" default="30.0" variable="patience-limit" units="Ticks"></slider>
     <slider x="5" step="1" y="270" max="200" width="250" display="num-customers" height="50" min="1" direction="Horizontal" default="70.0" variable="num-customers" units="Person"></slider>
     <slider x="5" step="1" y="325" max="100" width="250" display="simultaneous-order-num" height="50" min="1" direction="Horizontal" default="4.0" variable="simultaneous-order-num" units="Orders"></slider>
-    <monitor x="135" precision="17" y="560" height="60" fontSize="11" width="120" display="Order cancel">cancelled-order</monitor>
+    <monitor x="135" precision="17" y="560" height="60" fontSize="11" width="120" display="Pesanan batal">cancelled-order</monitor>
     <monitor x="5" precision="17" y="560" height="60" fontSize="11" width="120" display="Pesanan selesai">completed-order</monitor>
     <plot x="5" autoPlotX="true" yMax="10.0" autoPlotY="true" yAxis="Waktu tunggu" y="380" xMin="0.0" height="175" legend="false" xMax="100.0" yMin="0.0" width="250" xAxis="Tick" display="Rata-rata waktu tunggu">
       <setup></setup>
@@ -192,44 +192,61 @@ end]]></code>
       </pen>
     </plot>
     <monitor x="5" precision="17" y="625" height="60" fontSize="11" width="120" display="Kurir senggang">count couriers with [status = "f"]</monitor>
-    <monitor x="135" precision="17" y="625" height="60" fontSize="11" width="120" display="Menunggu kurir">n-waiting-customer</monitor>
+    <monitor x="135" precision="17" y="625" height="60" fontSize="11" width="120" display="Menunggu kurir">count customers with [status = "o"]</monitor>
   </widgets>
   <info>## WHAT IS IT?
 
-(a general understanding of what the model is trying to show or explain)
+Model to simulate the dynamics of online orders and couriers
 
 ## HOW IT WORKS
 
-(what rules the agents use to create the overall behavior of the model)
+The simulation consists of two agents, namely customer agent and courier agent of which represented by turtles in the shape a house and a person. A number of customer agent (based on `simultaneous-order-num`) will be selected randomly on every tick to place an order and wait until their order is picked up by a courier. If the customer has waited for too long (more than `patience-limit`), the customer will cancel their order. However, if a courier picks up the order, the customer will wait until the courier delivers the order to their location. But if the courier takes too long (more than `patience-limit`), the order will also be cancelled.
 
 ## HOW TO USE IT
 
-(how to use the model, including a description of each of the items in the Interface tab)
+Model is started by pressing the `setup` button to generate courier agents and customer agents, and then press the `go` button to simulate their behavour.
+
+- `num-couriers`: how many courier agents will be generated
+- `order-arrival-rate`: the probability customer agents will place an order in every ticks
+- `courier-speed`: the speed courier agents should move
+- `patience-limit`: how many ticks customer agents will wait until they cancel their order
+- `num-customers`: how many customer agents will be generated
+- `simultaneous-order-num`: how many customer agents can place an order in every ticks
 
 ## THINGS TO NOTICE
 
 (suggested things for the user to notice while running the model)
 
+Customer and courier agents behaviour is shown in the world. Each customer and courier agents state is colour coded.
+
+Customer agent:
+- `cyan`: placed an order and waiting for a courier to pick it up
+- `yellow`: waiting for their order to be delivered by the courier
+- `turquoise`: order has been delivered
+- `red`: order has been cancelled for waiting too long
+- `white`: agent is ready to place an order (default state)
+
+Courier agent:
+- `green`: agent is not taking an order and roaming about
+- `yellow`: agent is delivering an order and currently moving to a customer's position
+
+Another things to notice are:
+
+1. rata-rata waktu tunggu plot: shows the average waiting time of every customer agents for every ticks
+2. Pesanan selesai monitor: shows how many orders have been delivered since `go` button is pressed
+3. pesanan batal monitor: shows how many orders have been cancelled since `go` button is pressed
+4. kurir senggang monitor: shows how many courier agents currently not delivering an order
+5. menuggu kurir monitor: shows how many customer agents currently waiting for a courier agent to take their order
+
 ## THINGS TO TRY
 
-(suggested things for the user to try to do (move sliders, switches, etc.) with the model)
+Move each sliders to try simulate rush hour or many different real life conditions
 
 ## EXTENDING THE MODEL
 
 (suggested things to add or change in the Code tab to make the model more complicated, detailed, accurate, etc.)
 
-## NETLOGO FEATURES
-
-(interesting or unusual features of NetLogo that the model uses, particularly in the Code tab; or where workarounds were needed for missing features)
-
-## RELATED MODELS
-
-(models in the NetLogo Models Library and elsewhere which are of related interest)
-
-## CREDITS AND REFERENCES
-
-(a reference to the model's URL on the web if it has one, as well as any other necessary credits, citations, and links)
-</info>
+Further developments could try to create a road map that courier agents must follow to reach their customers. Craeting other agents to represent the sellers from whom customers place orders could also better simulate real-world conditions where courier must go from point A to Seller B before trying to reach the customer.</info>
   <turtleShapes>
     <shape name="default" rotatable="true" editableColorIndex="0">
       <polygon color="-1920102913" filled="true" marked="true">
