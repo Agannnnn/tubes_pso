@@ -244,8 +244,6 @@ Move each sliders to try simulate rush hour or many different real life conditio
 
 ## EXTENDING THE MODEL
 
-(suggested things to add or change in the Code tab to make the model more complicated, detailed, accurate, etc.)
-
 Further developments could try to create a road map that courier agents must follow to reach their customers. Craeting other agents to represent the sellers from whom customers place orders could also better simulate real-world conditions where courier must go from point A to Seller B before trying to reach the customer.</info>
   <turtleShapes>
     <shape name="default" rotatable="true" editableColorIndex="0">
